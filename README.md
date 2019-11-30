@@ -40,4 +40,13 @@ npm install --only=dev
 mongod
 gulp
 npm run watch
+
+mongo localhost:27017/armageddon init.js
+
+> openssl version
+LibreSSL 2.2.7
+
+> openssl enc -in scripts/v3questions.encoded -d -aes-256-cbc -pass stdin > scripts/v3questions.csv
+
+
 ```

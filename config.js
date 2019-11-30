@@ -1,7 +1,7 @@
 var config = {
   keyPath: "./key.pem",
   certPath: "./cert.pem",
-  jwtSecretOrKey: "boilerplate",
+  jwtSecretOrKey: "armageddon",
   password: "fakepassword"
 };
 

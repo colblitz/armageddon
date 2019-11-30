@@ -1,2 +1,9 @@
- - what is htmlFor attribute
- - autoFocus attribute?
+ - permissions? public vs anyone who already answered vs specific people
+ - make some initial views
+   - list of questions and text boxes
+   - login bar
+ - auto save vs save button?
+ - url parsing to look at other people's answers?
+ - profiles?
+ - unlock new sections as you finish sections
+ - reminders

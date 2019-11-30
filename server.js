@@ -28,22 +28,8 @@ var options = {
   cert : fs.readFileSync(config.certPath)
 };
 
-// Get mongoose models
-var User  = require('./models/user');
-
 // Mongo Configuration
-mongoose.connect('mongodb://localhost:27017/boiler');
-
-
-var newUser = new User();
-newUser.email = "test@gmail.com";
-
-newUser.save(function(err) {
-  if (err) {
-    console.log("error creating test user");
-    console.log(err);
-  }
-});
+mongoose.connect('mongodb://localhost:27017/armageddon');
 
 // Set up passport stuff
 var jwtOptions = {}
@@ -89,10 +75,10 @@ app.all('*', function(req, res) {
 });
 
 // http.createServer(app).listen(80);
-https.createServer(options, app).listen(app.get('port'), function() {
-  console.log('Express server listening on https port ' + app.get('port'));
-});
-
-// app.listen(app.get('port'), function() {
-//   console.log('Express server listening on port ' + app.get('port'));
+// https.createServer(options, app).listen(app.get('port'), function() {
+//   console.log('Express server listening on https port ' + app.get('port'));
 // });
+
+app.listen(app.get('port'), function() {
+  console.log('Express server listening on port ' + app.get('port'));
+});

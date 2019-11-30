@@ -5,6 +5,9 @@ var jwt      = require('jsonwebtoken');
 var config   = require('../config');
 
 var User  = require('../models/user');
+var Question  = require('../models/question');
+var AnswerSet  = require('../models/answerset');
+var Answer  = require('../models/answer');
 
 mongoose.Promise = global.Promise;
 
@@ -15,21 +18,21 @@ var checkPassword = function(password) {
 }
 
 // Generates hash using bCrypt
-// var createHash = function(password){
-//   return bcrypt.hashSync(password, bcrypt.genSaltSync(5));
-// }
+var createHash = function(password){
+  return bcrypt.hashSync(password, bcrypt.genSaltSync(5));
+}
 
-// var isValidPassword = function(user, password){
-//   return bcrypt.compareSync(password, user.password);
-// }
+var isValidPassword = function(user, password){
+  return bcrypt.compareSync(password, user.password);
+}
 
-// function checkLoginRequirements(username, password) {
-//   if (!username && !password) { return "Must have both a username and a password"; }
-//   if (!username) { return "Must have a username"; }
-//   if (!password) { return "Must have a password"; }
-//   // other username/password requirements
-//   return "";
-// }
+function checkLoginRequirements(username, password) {
+  if (!username && !password) { return "Must have both a username and a password"; }
+  if (!username) { return "Must have a username"; }
+  if (!password) { return "Must have a password"; }
+  // other username/password requirements
+  return "";
+}
 
 module.exports = function(passport, jwtSecretOrKey) {
   function createToken(userId) {
@@ -57,53 +60,55 @@ module.exports = function(passport, jwtSecretOrKey) {
 
   // //////////////////////////////////////////////////////////
 
-  // router.post('/register', function(req, res) {
-  //   console.log("register endpoint");
-  //   var username = req.body.username;
-  //   var password = req.body.password;
+  router.post('/register', function(req, res) {
+    console.log("register endpoint");
+    var username = req.body.username;
+    var password = req.body.password;
+    var email = req.body.email;
 
-  //   // Check username and password
-  //   var s = checkLoginRequirements(username, password);
-  //   if (s) { res.status(400).json({ error: s }); return; }
+    // Check username and password
+    var s = checkLoginRequirements(username, password);
+    if (s) { res.status(400).json({ error: s }); return; }
 
-  //   User.findOne({ 'username' : username }, function(err, user) {
-  //     // If error or user already exists
-  //     if (err) { res.status(500).json({ error: "Error checking for user: " + err }); return; }
-  //     if (user) { res.status(400).json({ error: "User already exists" }); return; }
+    User.findOne({ 'username' : username }, function(err, user) {
+      // If error or user already exists
+      if (err) { res.status(500).json({ error: "Error checking for user: " + err }); return; }
+      if (user) { res.status(400).json({ error: "User already exists" }); return; }
 
-  //     // Create user, save, and return token
-  //     var newUser = new User();
-  //     newUser.username = username;
-  //     newUser.password = createHash(password);
+      // Create user, save, and return token
+      var newUser = new User();
+      newUser.username = username;
+      newUser.password = createHash(password);
+      newUser.email = email;
 
-  //     newUser.save(function(err) {
-  //       if (err) { res.status(500).json({ error: "Error creating user: " + err }); return; }
-  //       res.json({ token: createToken(newUser._id) });
-  //     });
-  //   });
-  // });
+      newUser.save(function(err) {
+        if (err) { res.status(500).json({ error: "Error creating user: " + err }); return; }
+        res.json({ token: createToken(newUser._id) });
+      });
+    });
+  });
 
   // //////////////////////////////////////////////////////////
 
-  // router.post("/login", function(req, res) {
-  //   var username = req.body.username;
-  //   var password = req.body.password;
+  router.post("/login", function(req, res) {
+    var username = req.body.username;
+    var password = req.body.password;
 
-  //   // Check username and password
-  //   var s = checkLoginRequirements(username, password);
-  //   if (s) { res.status(400).json({ error: s }); }
+    // Check username and password
+    var s = checkLoginRequirements(username, password);
+    if (s) { res.status(400).json({ error: s }); }
 
-  //   User.findOne({ 'username' : username }, function(err, user) {
-  //     // If error or user already exists
-  //     if (err) { res.status(500).json({ error: "Error checking for user: " + err }); return; }
-  //     if (!user) { res.status(400).json({ error: "User does not exist" }); return; }
+    User.findOne({ 'username' : username }, function(err, user) {
+      // If error or user already exists
+      if (err) { res.status(500).json({ error: "Error checking for user: " + err }); return; }
+      if (!user) { res.status(400).json({ error: "User does not exist" }); return; }
 
-  //     // Check password
-  //     if (!isValidPassword(user, password)) { res.status(401).json({ error: "Invalid password" }); return; }
+      // Check password
+      if (!isValidPassword(user, password)) { res.status(401).json({ error: "Invalid password" }); return; }
 
-  //     res.json({ token: createToken(user._id) });
-  //   });
-  // });
+      res.json({ token: createToken(user._id) });
+    });
+  });
 
   // //////////////////////////////////////////////////////////
 
